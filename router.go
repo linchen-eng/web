@@ -6,7 +6,8 @@ import (
 
 // 路由树的节点结构
 type node struct {
-	//
+	//当前路由
+	route string
 	//当前节点的路径
 	path string
 	//当前节点的下一级子节点
@@ -85,6 +86,7 @@ func (r *Router) addRouter(method, path string, handleFunc HandleFunc) {
 	}
 	//最后为节点关联路由的回调方法 供用户处理业务逻辑
 	root.handleFunc = handleFunc
+	root.route = path
 }
 
 // 路由查找 获取路由对应的处理方法
@@ -102,13 +104,18 @@ func (r *Router) findRoute(method, path string) (*node, bool) {
 			continue
 		}
 		//通配符路由和子节点路由均为空时退出匹配
-		if root.child == nil && root.wildcard == nil {
-			break
+		ok := false
+		var tmpNode *node
+		if root.child != nil {
+			//获取静态匹配路由
+			tmpNode, ok = root.child[subStr]
 		}
-		root, ok := root.child[subStr]
-		if !ok {
+		if !ok && root.wildcard != nil {
 			//获取通配符路由
-			root = root.wildcard[subStr]
+			tmpNode, ok = root.wildcard["*"]
+		}
+		if ok {
+			root = tmpNode
 		}
 	}
 	return root, true

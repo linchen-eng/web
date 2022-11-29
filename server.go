@@ -2,7 +2,7 @@ package web
 
 import "net/http"
 
-type HandleFunc func(ctx *Context)
+type HandleFunc func(ctx *Context) string
 
 // web服务接口
 type server interface {
@@ -36,6 +36,7 @@ func (s *HTTPServer) serve(ctx *Context) {
 		ctx.resp.Write([]byte("Not Found"))
 		return
 	}
+	ctx.route = node.path
 	node.handleFunc(ctx)
 }
 

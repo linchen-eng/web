@@ -12,6 +12,8 @@ type Context struct {
 	resp http.ResponseWriter
 	//路由GET参数 缓存
 	cacheQueryValues map[string][]string
+	//路由
+	route string
 }
 
 // ResponseJson 响应客户端json数据
@@ -55,14 +57,43 @@ func (ctx *Context) QueryValue(key string) StringValue {
 	return StringValue{val: vals[0]}
 }
 
+// StringValue 参数返回值结构体
 type StringValue struct {
 	val string
 	err error
 }
 
+// AsInt64 强转64位 int
 func (sv *StringValue) AsInt64() (int64, error) {
 	if sv.err != nil {
 		return 0, sv.err
 	}
 	return strconv.ParseInt(sv.val, 10, 64)
+}
+
+// AsInt32 强转32位 int
+func (sv *StringValue) AsInt32() (int32, error) {
+	if sv.err != nil {
+		return 0, sv.err
+	}
+	val, err := strconv.Atoi(sv.val)
+	return int32(val), err
+}
+
+// AsInt16 强转16位 int
+func (sv *StringValue) AsInt16() (int16, error) {
+	if sv.err != nil {
+		return 0, sv.err
+	}
+	val, err := strconv.Atoi(sv.val)
+	return int16(val), err
+}
+
+// AsInt8 强转8位 int
+func (sv *StringValue) AsInt8() (int8, error) {
+	if sv.err != nil {
+		return 0, sv.err
+	}
+	val, err := strconv.Atoi(sv.val)
+	return int8(val), err
 }

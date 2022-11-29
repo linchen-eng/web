@@ -5,6 +5,7 @@ import "net/http"
 type HandleFunc func(ctx *Context) string
 
 // web服务接口
+// 先注册路由 再启动服务
 type server interface {
 	http.Handler
 

@@ -35,7 +35,11 @@ func (s *HTTPServer) serve(ctx *Context) {
 	node := mi.n
 	if ok == false || node == nil || node.handleFunc == nil {
 		ctx.resp.WriteHeader(404)
-		ctx.resp.Write([]byte("Not Found"))
+		data := []byte("Not Found")
+		n, err := ctx.resp.Write(data)
+		if err != nil || len(data) != n {
+			return
+		}
 		return
 	}
 	ctx.route = node.path

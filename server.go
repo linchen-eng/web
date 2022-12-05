@@ -31,7 +31,8 @@ func NewHTTPServer() *HTTPServer {
 
 // serve 处理http请求
 func (s *HTTPServer) serve(ctx *Context) {
-	node, ok := s.r.findRoute(ctx.req.Method, ctx.req.URL.Path)
+	mi, ok := s.r.findRoute(ctx.req.Method, ctx.req.URL.Path)
+	node := mi.n
 	if ok == false || node == nil || node.handleFunc == nil {
 		ctx.resp.WriteHeader(404)
 		ctx.resp.Write([]byte("Not Found"))

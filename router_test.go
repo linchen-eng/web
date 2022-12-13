@@ -16,8 +16,8 @@ func TestAddAndFindRouter(t *testing.T) {
 		path       string
 		handleFunc HandleFunc
 	}
-	mockHandleFunc := func(ctx *Context) string {
-		return ctx.route
+	mockHandleFunc := func(ctx *Context) {
+		fmt.Println(ctx.route)
 	}
 	cases := make([]*mockRouter, 0)
 	cases = append(cases, &mockRouter{method: "POST", path: "/user/add", handleFunc: mockHandleFunc})
@@ -40,8 +40,7 @@ func TestAddAndFindRouter(t *testing.T) {
 			resp:  nil,
 			route: v.path,
 		}
-		retPath := mi.n.handleFunc(ctx)
-		assert.Equal(t, v.path, retPath)
+		mi.n.handleFunc(ctx)
 	}
 	//通配符路由测试 /user/*
 	casePath := "/user/update/V1"
@@ -92,8 +91,8 @@ func BenchmarkAddAndFindRouter(b *testing.B) {
 		path       string
 		handleFunc HandleFunc
 	}
-	mockHandleFunc := func(ctx *Context) string {
-		return ctx.route
+	mockHandleFunc := func(ctx *Context) {
+		fmt.Println(ctx.route)
 	}
 	cases := make([]*mockRouter, 0)
 	cases = append(cases, &mockRouter{method: "POST", path: "/user/add", handleFunc: mockHandleFunc})
@@ -117,8 +116,9 @@ func BenchmarkAddAndFindRouter(b *testing.B) {
 				resp:  nil,
 				route: v.path,
 			}
-			retPath := mi.n.handleFunc(ctx)
-			assert.Equal(b, v.path, retPath)
+			mi.n.handleFunc(ctx)
+			//retPath := mi.n.handleFunc(ctx)
+			//assert.Equal(b, v.path, retPath)
 		}
 		//panic 测试
 		assert.PanicsWithValue(b, "路由格式不支持:路径中不能包含'//'这样的字符串", func() {
@@ -129,6 +129,9 @@ func BenchmarkAddAndFindRouter(b *testing.B) {
 		})
 		assert.PanicsWithValue(b, "路由格式不支持:路径中不能包含'//'这样的字符串", func() {
 			r.addRouter(http.MethodGet, "//user//add//", mockHandleFunc)
+		})
+		assert.PanicsWithValue(b, "", func() {
+
 		})
 	}
 }
@@ -144,4 +147,5 @@ func TestRegexExpress(t *testing.T) {
 	re := regexp.MustCompile(test)
 	ss := re.FindAllString("123", -1)
 	fmt.Println(ss)
+
 }

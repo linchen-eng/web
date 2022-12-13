@@ -23,14 +23,14 @@ type node struct {
 	regexExpress string
 }
 
-// Router 路由树的结构
-type Router struct {
+// router 路由树的结构
+type router struct {
 	trees map[string]*node
 }
 
 // NewRouter 初始化路由
-func NewRouter() *Router {
-	return &Router{trees: make(map[string]*node)}
+func NewRouter() router {
+	return router{trees: make(map[string]*node)}
 }
 
 // wildcardOrCreate 为当前节点创建通配符节点
@@ -75,7 +75,7 @@ func (n *node) childOrCreate(path string) *node {
 }
 
 // 注册路由到路有树
-func (r *Router) addRouter(method, path string, handleFunc HandleFunc) {
+func (r *router) addRouter(method, path string, handleFunc HandleFunc) {
 	if _, ok := r.trees[method]; !ok {
 		//当前http方法未注册，需要初始化路由树
 		r.trees[method] = &node{path: "/", child: nil, handleFunc: nil}
@@ -110,7 +110,7 @@ func (r *Router) addRouter(method, path string, handleFunc HandleFunc) {
 }
 
 // 路由查找 获取路由对应的处理方法
-func (r *Router) findRoute(method, path string) (*matchInfo, bool) {
+func (r *router) findRoute(method, path string) (*matchInfo, bool) {
 	if _, ok := r.trees[method]; !ok {
 		return nil, false
 	}
